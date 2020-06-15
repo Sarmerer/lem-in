@@ -1,0 +1,28 @@
+Reqirements: 
+
+    ##start and ##end shouldn't have duplicates
+
+    There is always a path between ##start and ##end, but it's never direct
+
+    One room can contain only one ant at a time
+
+    Room name can't contain "L" and "#" symbol
+
+
+Errors: 
+
+    There are cases when rooms are linked to themseleves, creating a loop
+
+    Sometimes there is no ##start or ##end room
+
+    Sometimes there are clones of an existing room
+
+    Sometimes there are links to rooms taht do NOT exist, or to rooms with wrom coordinates
+
+    Variety of other invalid/poorly formatted input(???)
+
+    Room name can't contain "L" and "#" symbol
+
+
+Bonus:
+    Create visualizer
