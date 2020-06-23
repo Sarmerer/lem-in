@@ -74,9 +74,28 @@ func parseFile(fileName string) {
 	} else if !endFound {
 		invalidInput("no end room")
 	}
+	parseComments(&arr, &usedIndexes)
 	parseRooms(&arr, &rooms, &usedIndexes)
 	parseLinks(&arr, &links, &usedIndexes)
 	fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\nRooms: %v\nLinks: %v\n", antsAmount, start, end, rooms, links)
+}
+
+func parseComments(arr *[]string, usedIndexes *[]int) {
+	for index, line := range *arr {
+		if len(line) > 0 {
+			if line[0] == '#' {
+				spl := strings.Split(line, " ")
+				if len(spl) == 3 {
+					_, xErr := strconv.Atoi(spl[1])
+					_, yErr := strconv.Atoi(spl[2])
+					if xErr != nil || yErr != nil {
+						invalidInput("invalid room params")
+					}
+				}
+				*usedIndexes = append(*usedIndexes, index)
+			}
+		}
+	}
 }
 
 func parseRooms(arr, rooms *[]string, usedIndexes *[]int) {
