@@ -137,10 +137,6 @@ func parseLinks(arr *[]string, links *[][]string, usedIndexes *[]int) {
 	}
 }
 
-func roomExists() {
-
-}
-
 func indexIsFree(index int, usedIndexes *[]int) bool {
 	for _, idx := range *usedIndexes {
 		if idx == index {
@@ -193,11 +189,11 @@ func validRoom(line string, roomPointer *string) bool {
 	if xErr != nil {
 		return false
 	}
-	_ = xCoord
 	yCoord, yErr := strconv.Atoi(spl[2])
 	if yErr != nil {
 		return false
 	}
+	_ = xCoord
 	_ = yCoord
 	if len(spl[0]) > 0 {
 		if spl[0][0] == '#' || spl[0][0] == 'L' {
