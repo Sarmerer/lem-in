@@ -1,13 +1,13 @@
-package parser
+package types
 
-type data struct {
-	Rooms      []roomStruct
+type Data struct {
+	Rooms      []RoomStruct
 	AntsAmount int
 	Start      string
 	End        string
 }
 
-type roomStruct struct {
+type RoomStruct struct {
 	Name        string
 	CoordX      int
 	CoordY      int

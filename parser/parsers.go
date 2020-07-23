@@ -2,15 +2,15 @@ package parser
 
 import (
 	"bufio"
-	"fmt"
+	"lem-in/types"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 )
 
-func ParseFile(fileName string) {
-	var Data data
+func ParseFile(fileName string) *types.Data {
+	var data types.Data
 	usedIndexes := []int{0}
 	roomsMap := make(map[string]int)
 
@@ -27,14 +27,15 @@ func ParseFile(fileName string) {
 	if len(lines) == 0 {
 		invalidInput(-1, "no data provided")
 	}
-	parseSoreAndAnts(&lines, &usedIndexes, &Data.Start, &Data.End, &Data.AntsAmount)
+	parseSoreAndAnts(&lines, &usedIndexes, &data.Start, &data.End, &data.AntsAmount)
 	parseComments(&lines, &usedIndexes)
-	parseRooms(&lines, &Data.Rooms, &usedIndexes, roomsMap)
-	parseLinks(&lines, &usedIndexes, &Data.Rooms, roomsMap)
-	fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\nRooms:", Data.AntsAmount, Data.Start, Data.End)
-	for _, r := range Data.Rooms {
-		fmt.Printf("\n Name: %v\n  x: %v\n  y: %v\n  Links: %v", r.Name, r.CoordX, r.CoordY, r.Connections)
-	}
+	parseRooms(&lines, &data.Rooms, &usedIndexes, roomsMap)
+	parseLinks(&lines, &usedIndexes, &data.Rooms, roomsMap)
+	// fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\nRooms:", Data.AntsAmount, Data.Start, Data.End)
+	// for _, r := range Data.Rooms {
+	// 	fmt.Printf("\n Name: %v\n  x: %v\n  y: %v\n  Links: %v", r.Name, r.CoordX, r.CoordY, r.Connections)
+	// }
+	return &data
 }
 
 func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *string, antsAmount *int) {
@@ -80,7 +81,7 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 	}
 }
 
-func parseRooms(lines *[]string, rooms *[]roomStruct, usedIndexes *[]int, roomsMap map[string]int) {
+func parseRooms(lines *[]string, rooms *[]types.RoomStruct, usedIndexes *[]int, roomsMap map[string]int) {
 	for index, line := range *lines {
 		var room string
 		if indexIsFree(index, usedIndexes) {
@@ -90,7 +91,7 @@ func parseRooms(lines *[]string, rooms *[]roomStruct, usedIndexes *[]int, roomsM
 				} else {
 					invalidInput(index, "invalid room params")
 				}
-				*rooms = append(*rooms, roomStruct{room, x, y, []string{}})
+				*rooms = append(*rooms, types.RoomStruct{room, x, y, []string{}})
 				*usedIndexes = append(*usedIndexes, index)
 			} else if !validLink(line, &[]string{}) {
 				invalidInput(index, "invalid room params")
@@ -99,7 +100,7 @@ func parseRooms(lines *[]string, rooms *[]roomStruct, usedIndexes *[]int, roomsM
 	}
 }
 
-func parseLinks(arr *[]string, usedIndexes *[]int, rooms *[]roomStruct, roomsMap map[string]int) {
+func parseLinks(arr *[]string, usedIndexes *[]int, rooms *[]types.RoomStruct, roomsMap map[string]int) {
 	for index, line := range *arr {
 		var link []string
 		if indexIsFree(index, usedIndexes) {
@@ -111,17 +112,8 @@ func parseLinks(arr *[]string, usedIndexes *[]int, rooms *[]roomStruct, roomsMap
 				} else if link[0] == link[1] {
 					invalidInput(index, "invalid link params")
 				}
-				appendConnections(link[0], link[1], rooms)
+				(*rooms)[roomsMap[link[0]]-1].Connections = append((*rooms)[roomsMap[link[0]]-1].Connections, link[1])
 			}
-		}
-	}
-}
-
-func appendConnections(a, b string, rooms *[]roomStruct) {
-	for i := range *rooms {
-		if (*rooms)[i].Name == a {
-			(*rooms)[i].Connections = append((*rooms)[i].Connections, b)
-			break
 		}
 	}
 }

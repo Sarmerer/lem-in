@@ -2,8 +2,10 @@ package main
 
 import (
 	"lem-in/parser"
+	"lem-in/solver"
 )
 
 func main() {
-	parser.ParseFile("example00.txt")
+	a := parser.ParseFile("./maps/example00.txt")
+	solver.Solve(a)
 }
