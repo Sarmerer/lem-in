@@ -3,7 +3,7 @@ package parser
 func soreCheck(arr *[]string, usedIndexes *[]int, found *bool, sorePointer *string, index int, sore string) { //sore == start or end
 	if !*found {
 		if index < len(*arr)-1 {
-			if !validRoom((*arr)[index+1], sorePointer) {
+			if _, _, valid := validRoom((*arr)[index+1], sorePointer); !valid {
 				invalidInput("invalid " + sore + " room params")
 			} else {
 				*usedIndexes = append(*usedIndexes, index)

@@ -10,18 +10,11 @@ import (
 )
 
 func ParseFile(fileName string) {
-	var start string
-	var end string
-	var rooms []string
 	var links [][]string
-	var test data
+	var Data data
 
 	usedIndexes := []int{0}
 
-	var antsAmount int
-
-	startFound := false
-	endFound := false
 	roomsMap = make(map[string]string)
 
 	file, err := os.Open(fileName)
@@ -37,23 +30,32 @@ func ParseFile(fileName string) {
 	}
 
 	if len(lines) == 0 {
-		fmt.Println("Not enough data")
-		os.Exit(1)
+		invalidInput("no data provided")
 	}
+	parseSoreAndAnts(&lines, &usedIndexes, &Data.Start, &Data.End, &Data.AntsAmount)
+	parseComments(&lines, &usedIndexes)
+	parseRooms(&lines, &Data.Rooms, &usedIndexes)
+	parseLinks(&lines, &links, &usedIndexes)
+	fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\nRooms:", Data.AntsAmount, Data.Start, Data.End)
+	for _, r := range Data.Rooms {
+		fmt.Printf("\n Name: %v\n  x: %v\n  y: %v\n  Links: %v", r.Name, r.CoordX, r.CoordY, r.Connections)
+	}
+}
 
-	for index, line := range lines {
+func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *string, antsAmount *int) {
+	startFound := false
+	endFound := false
+	for index, line := range *lines {
 		if index == 0 {
-			a, err := strconv.Atoi(line)
-			if err != nil || a < 1 {
+			antsAmount, err := strconv.Atoi(line)
+			if err != nil || antsAmount < 1 {
 				invalidInput("invalid ants amount")
 			}
-			antsAmount = a
-			test.AntsAmount = a
 		} else {
 			if line == "##start" {
-				soreCheck(&lines, &usedIndexes, &startFound, &start, index, "start")
+				soreCheck(lines, usedIndexes, &startFound, start, index, "start")
 			} else if line == "##end" {
-				soreCheck(&lines, &usedIndexes, &endFound, &end, index, "end")
+				soreCheck(lines, usedIndexes, &endFound, end, index, "end")
 			}
 		}
 	}
@@ -62,10 +64,6 @@ func ParseFile(fileName string) {
 	} else if !endFound {
 		invalidInput("no end room")
 	}
-	parseComments(&lines, &usedIndexes)
-	parseRooms(&lines, &rooms, &usedIndexes)
-	parseLinks(&lines, &links, &usedIndexes)
-	fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\nRooms: %v\nLinks: %v\n", antsAmount, start, end, rooms, links)
 }
 
 func parseComments(arr *[]string, usedIndexes *[]int) {
@@ -86,18 +84,18 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 	}
 }
 
-func parseRooms(arr, rooms *[]string, usedIndexes *[]int) {
-	for index, line := range *arr {
+func parseRooms(lines *[]string, rooms *[]roomStruct, usedIndexes *[]int) {
+	for index, line := range *lines {
 		var room string
 		var extra []string
 		if indexIsFree(index, usedIndexes) {
-			if validRoom(line, &room) {
+			if x, y, valid := validRoom(line, &room); valid {
 				if _, ok := roomsMap[room]; !ok {
 					roomsMap[room] = room
 				} else {
 					invalidInput("invalid room params")
 				}
-				*rooms = append(*rooms, room)
+				*rooms = append(*rooms, roomStruct{room, x, y, []string{}})
 				*usedIndexes = append(*usedIndexes, index)
 			} else if !validLink(line, &extra) {
 				invalidInput("invalid room params")
