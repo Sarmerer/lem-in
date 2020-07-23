@@ -4,16 +4,16 @@ func soreCheck(arr *[]string, usedIndexes *[]int, found *bool, sorePointer *stri
 	if !*found {
 		if index < len(*arr)-1 {
 			if _, _, valid := validRoom((*arr)[index+1], sorePointer); !valid {
-				invalidInput("invalid " + sore + " room params")
+				invalidInput(-1, "invalid "+sore+" room params")
 			} else {
 				*usedIndexes = append(*usedIndexes, index)
 			}
 			*found = true
 		} else {
-			invalidInput("no " + sore + " room coords")
+			invalidInput(-1, "no "+sore+" room coords")
 		}
 	} else {
-		invalidInput("another " + sore + " declaration")
+		invalidInput(-1, "another "+sore+" declaration")
 	}
 }
 

@@ -11,9 +11,7 @@ import (
 
 func ParseFile(fileName string) {
 	var Data data
-
 	usedIndexes := []int{0}
-
 	roomsMap := make(map[string]int)
 
 	file, err := os.Open(fileName)
@@ -21,15 +19,13 @@ func ParseFile(fileName string) {
 		log.Fatal(err)
 	}
 	defer file.Close()
-
 	scanner := bufio.NewScanner(file)
 	var lines []string
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
-
 	if len(lines) == 0 {
-		invalidInput("no data provided")
+		invalidInput(-1, "no data provided")
 	}
 	parseSoreAndAnts(&lines, &usedIndexes, &Data.Start, &Data.End, &Data.AntsAmount)
 	parseComments(&lines, &usedIndexes)
@@ -48,7 +44,7 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *string, a
 		if index == 0 {
 			a, err := strconv.Atoi(line)
 			if err != nil || a < 1 {
-				invalidInput("invalid ants amount")
+				invalidInput(index, "invalid ants amount")
 			}
 			*antsAmount = a
 		} else {
@@ -60,9 +56,9 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *string, a
 		}
 	}
 	if !startFound {
-		invalidInput("no start room")
+		invalidInput(-1, "no start room")
 	} else if !endFound {
-		invalidInput("no end room")
+		invalidInput(-1, "no end room")
 	}
 }
 
@@ -75,7 +71,7 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 					_, xErr := strconv.Atoi(spl[1])
 					_, yErr := strconv.Atoi(spl[2])
 					if xErr != nil || yErr != nil {
-						invalidInput("invalid room params")
+						invalidInput(index, "invalid room params")
 					}
 				}
 				*usedIndexes = append(*usedIndexes, index)
@@ -87,18 +83,17 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 func parseRooms(lines *[]string, rooms *[]roomStruct, usedIndexes *[]int, roomsMap map[string]int) {
 	for index, line := range *lines {
 		var room string
-		var extra []string
 		if indexIsFree(index, usedIndexes) {
 			if x, y, valid := validRoom(line, &room); valid {
 				if _, ok := roomsMap[room]; !ok {
 					roomsMap[room] = len(*rooms) + 1
 				} else {
-					invalidInput("invalid room params")
+					invalidInput(index, "invalid room params")
 				}
 				*rooms = append(*rooms, roomStruct{room, x, y, []string{}})
 				*usedIndexes = append(*usedIndexes, index)
-			} else if !validLink(line, &extra) {
-				invalidInput("invalid room params")
+			} else if !validLink(line, &[]string{}) {
+				invalidInput(index, "invalid room params")
 			}
 		}
 	}
@@ -110,11 +105,11 @@ func parseLinks(arr *[]string, usedIndexes *[]int, rooms *[]roomStruct, roomsMap
 		if indexIsFree(index, usedIndexes) {
 			if validLink(line, &link) {
 				if _, ok := roomsMap[link[0]]; !ok {
-					invalidInput("invalid link params")
+					invalidInput(index, "invalid link params")
 				} else if _, ok := roomsMap[link[1]]; !ok {
-					invalidInput("invalid link params")
+					invalidInput(index, "invalid link params")
 				} else if link[0] == link[1] {
-					invalidInput("invalid link params")
+					invalidInput(index, "invalid link params")
 				}
 				appendConnections(link[0], link[1], rooms)
 			}

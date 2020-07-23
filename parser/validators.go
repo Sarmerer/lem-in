@@ -33,9 +33,8 @@ func validRoom(line string, roomPointer *string) (int, int, bool) {
 
 func validLink(line string, linkPointer *[]string) bool {
 	spl := strings.Split(line, "-")
-	expectedSplLen := 2
 
-	if len(spl) != expectedSplLen {
+	if len(spl) != 2 {
 		return false
 	}
 	linkFrom := spl[0]
@@ -46,7 +45,11 @@ func validLink(line string, linkPointer *[]string) bool {
 	return true
 }
 
-func invalidInput(msg string) {
-	fmt.Printf("Invalid input: %v\n", msg)
+func invalidInput(line int, msg string) {
+	if line >= 0 {
+		fmt.Printf("Invalid input at line #%v: %v\n", line+1, msg)
+	} else {
+		fmt.Printf("Invalid input: %v\n", msg)
+	}
 	os.Exit(1)
 }
