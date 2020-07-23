@@ -18,5 +18,3 @@ type antStruct struct {
 	ID       int
 	Position string
 }
-
-var roomsMap map[string]string

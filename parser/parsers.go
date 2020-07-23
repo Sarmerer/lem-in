@@ -10,12 +10,11 @@ import (
 )
 
 func ParseFile(fileName string) {
-	var links [][]string
 	var Data data
 
 	usedIndexes := []int{0}
 
-	roomsMap = make(map[string]string)
+	roomsMap := make(map[string]int)
 
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -34,8 +33,8 @@ func ParseFile(fileName string) {
 	}
 	parseSoreAndAnts(&lines, &usedIndexes, &Data.Start, &Data.End, &Data.AntsAmount)
 	parseComments(&lines, &usedIndexes)
-	parseRooms(&lines, &Data.Rooms, &usedIndexes)
-	parseLinks(&lines, &links, &usedIndexes)
+	parseRooms(&lines, &Data.Rooms, &usedIndexes, roomsMap)
+	parseLinks(&lines, &usedIndexes, &Data.Rooms, roomsMap)
 	fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\nRooms:", Data.AntsAmount, Data.Start, Data.End)
 	for _, r := range Data.Rooms {
 		fmt.Printf("\n Name: %v\n  x: %v\n  y: %v\n  Links: %v", r.Name, r.CoordX, r.CoordY, r.Connections)
@@ -47,10 +46,11 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *string, a
 	endFound := false
 	for index, line := range *lines {
 		if index == 0 {
-			antsAmount, err := strconv.Atoi(line)
-			if err != nil || antsAmount < 1 {
+			a, err := strconv.Atoi(line)
+			if err != nil || a < 1 {
 				invalidInput("invalid ants amount")
 			}
+			*antsAmount = a
 		} else {
 			if line == "##start" {
 				soreCheck(lines, usedIndexes, &startFound, start, index, "start")
@@ -84,14 +84,14 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 	}
 }
 
-func parseRooms(lines *[]string, rooms *[]roomStruct, usedIndexes *[]int) {
+func parseRooms(lines *[]string, rooms *[]roomStruct, usedIndexes *[]int, roomsMap map[string]int) {
 	for index, line := range *lines {
 		var room string
 		var extra []string
 		if indexIsFree(index, usedIndexes) {
 			if x, y, valid := validRoom(line, &room); valid {
 				if _, ok := roomsMap[room]; !ok {
-					roomsMap[room] = room
+					roomsMap[room] = len(*rooms) + 1
 				} else {
 					invalidInput("invalid room params")
 				}
@@ -104,7 +104,7 @@ func parseRooms(lines *[]string, rooms *[]roomStruct, usedIndexes *[]int) {
 	}
 }
 
-func parseLinks(arr *[]string, links *[][]string, usedIndexes *[]int) {
+func parseLinks(arr *[]string, usedIndexes *[]int, rooms *[]roomStruct, roomsMap map[string]int) {
 	for index, line := range *arr {
 		var link []string
 		if indexIsFree(index, usedIndexes) {
@@ -116,9 +116,17 @@ func parseLinks(arr *[]string, links *[][]string, usedIndexes *[]int) {
 				} else if link[0] == link[1] {
 					invalidInput("invalid link params")
 				}
-				*links = append(*links, link)
-				link = nil
+				appendConnections(link[0], link[1], rooms)
 			}
+		}
+	}
+}
+
+func appendConnections(a, b string, rooms *[]roomStruct) {
+	for i := range *rooms {
+		if (*rooms)[i].Name == a {
+			(*rooms)[i].Connections = append((*rooms)[i].Connections, b)
+			break
 		}
 	}
 }
