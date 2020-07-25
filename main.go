@@ -6,6 +6,5 @@ import (
 )
 
 func main() {
-	a := parser.ParseFile("./maps/example00.txt")
-	solver.Solve(a)
+	solver.Solve(parser.ParseFile("./maps/example00.txt"))
 }
