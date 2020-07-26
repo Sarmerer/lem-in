@@ -6,7 +6,7 @@ import (
 	"text/template"
 )
 
-var indexTpl *template.Template = template.Must(template.ParseGlob("templates/index/*.html"))
+var indexTpl *template.Template = template.Must(template.ParseGlob("../ui/templates/index/*.html"))
 
 func index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
