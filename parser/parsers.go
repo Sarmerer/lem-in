@@ -2,8 +2,8 @@ package parser
 
 import (
 	"bufio"
+	"fmt"
 	"lem-in/types"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -18,7 +18,8 @@ func ParseFile(fileName string) (*types.Data, *types.Graph) {
 
 	file, err := os.Open(fileName)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
