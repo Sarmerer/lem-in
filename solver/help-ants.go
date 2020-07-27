@@ -39,6 +39,7 @@ func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) []types.Ant {
 // MoveAnts moves all ants from source to sink in a correct order
 func MoveAnts(ants []types.Ant, sink types.Room) {
 	currPath := 1
+	counter := 0
 	//MOVE ANTS
 	for !allAntsIn(ants, sink) {
 		for i := range ants {
@@ -48,6 +49,7 @@ func MoveAnts(ants []types.Ant, sink types.Room) {
 					fmt.Printf("L%v-%v\t", i, ants[i].Path[currPath].Name)
 					ants[i].Position = sink
 					ants[i].Path[currPath-1].HasAnt = false
+					counter++
 					continue
 				}
 				if !ants[i].Path[currPath].HasAnt {
@@ -56,11 +58,13 @@ func MoveAnts(ants []types.Ant, sink types.Room) {
 					ants[i].Path[currPath].HasAnt = true
 					ants[i].Path[currPath-1].HasAnt = false
 					ants[i].Path = ants[i].Path[currPath:]
+					counter++
 				}
 			}
 		}
 		fmt.Println("")
 	}
+	fmt.Println("Turns:", counter)
 }
 
 func allAntsIn(ants []types.Ant, sink types.Room) bool {
