@@ -12,9 +12,8 @@ import (
 func main() {
 	file := utils.ProcessInput(os.Args[1:])
 	tStart := time.Now()
-	data, graph, lines := parser.ParseFile(file)
-	ants := solver.InitAntsAndAssignPaths(data, graph)
-	utils.PrintResult(lines)
-	solver.MoveAnts(ants, data.End)
+	lines := parser.ReadFile(file)
+	result := solver.MoveAnts(solver.InitAntsAndAssignPaths(parser.ParseFile(lines)))
+	utils.PrintResult(lines, result)
 	fmt.Println("Elapsed:", time.Since(tStart).Seconds())
 }

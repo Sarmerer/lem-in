@@ -9,13 +9,8 @@ import (
 	"strings"
 )
 
-func ParseFile(fileName string) (*types.Data, *types.Graph, *[]string) {
-	graph := types.InitGraph()
-
-	var data types.Data
-	usedIndexes := []int{0}
-	roomsMap := make(map[string]int)
-
+func ReadFile(fileName string) *[]string {
+	var lines []string
 	file, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -23,18 +18,26 @@ func ParseFile(fileName string) (*types.Data, *types.Graph, *[]string) {
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
-	var lines []string
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
 	if len(lines) == 0 {
 		invalidInput(-1, "no data provided")
 	}
-	parseSoreAndAnts(&lines, &usedIndexes, &data.Start, &data.End, &data.AntsAmount)
-	parseComments(&lines, &usedIndexes)
-	parseRooms(&lines, graph, &usedIndexes, roomsMap)
-	parseLinks(&lines, &usedIndexes, graph, roomsMap)
-	return &data, graph, &lines
+	return &lines
+}
+
+func ParseFile(lines *[]string) (*types.Data, *types.Graph) {
+	graph := types.InitGraph()
+	var data types.Data
+	usedIndexes := []int{0}
+	roomsMap := make(map[string]int)
+
+	parseSoreAndAnts(lines, &usedIndexes, &data.Start, &data.End, &data.AntsAmount)
+	parseComments(lines, &usedIndexes)
+	parseRooms(lines, graph, &usedIndexes, roomsMap)
+	parseLinks(lines, &usedIndexes, graph, roomsMap)
+	return &data, graph
 }
 
 func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Room, antsAmount *int) {

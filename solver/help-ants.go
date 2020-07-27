@@ -9,7 +9,7 @@ import (
 // Use the following logic to calculate an optimal path:
 // If Rooms in Path1 + Ants in Path1 > Rooms in Path2 send Ant to Path2
 // Otherwise, send Ant to Path1
-func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) []types.Ant {
+func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) ([]types.Ant, *types.Room) {
 	paths := EdmondsKarp(graph, data.Start, data.End)
 	ants := make([]types.Ant, data.AntsAmount)
 	for i := 0; i < data.AntsAmount; i++ {
@@ -33,38 +33,37 @@ func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) []types.Ant {
 		}
 	}
 
-	return ants
+	return ants, &data.End
 }
 
 // MoveAnts moves all ants from source to sink in a correct order
-func MoveAnts(ants []types.Ant, sink types.Room) {
+func MoveAnts(ants []types.Ant, sink *types.Room) *[][]string {
+	var result [][]string
 	currPath := 1
-	counter := 0
 	//MOVE ANTS
-	for !allAntsIn(ants, sink) {
+	for !allAntsIn(ants, *sink) {
+		var iteration []string
 		for i := range ants {
-			if ants[i].Position != sink {
+			if ants[i].Position != *sink {
 				sink.HasAnt = false
-				if ants[i].Path[currPath] == sink {
-					fmt.Printf("L%v-%v\t", i, ants[i].Path[currPath].Name)
-					ants[i].Position = sink
+				if ants[i].Path[currPath] == *sink {
+					iteration = append(iteration, fmt.Sprintf("L%v-%v ", i, ants[i].Path[currPath].Name))
+					ants[i].Position = *sink
 					ants[i].Path[currPath-1].HasAnt = false
-					counter++
 					continue
 				}
 				if !ants[i].Path[currPath].HasAnt {
-					fmt.Printf("L%v-%v\t", i, ants[i].Path[currPath].Name)
+					iteration = append(iteration, fmt.Sprintf("L%v-%v ", i, ants[i].Path[currPath].Name))
 					ants[i].Position = ants[i].Path[currPath]
 					ants[i].Path[currPath].HasAnt = true
 					ants[i].Path[currPath-1].HasAnt = false
 					ants[i].Path = ants[i].Path[currPath:]
-					counter++
 				}
 			}
 		}
-		fmt.Println("")
+		result = append(result, iteration)
 	}
-	fmt.Println("Turns:", counter)
+	return &result
 }
 
 func allAntsIn(ants []types.Ant, sink types.Room) bool {
