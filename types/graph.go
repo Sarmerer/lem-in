@@ -2,8 +2,8 @@ package types
 
 type Data struct {
 	AntsAmount int
-	Start      string
-	End        string
+	Start,
+	End Room
 }
 
 // Room structure with name, (x, y) coordinates, and HasAnt bool to check if the room is empty.

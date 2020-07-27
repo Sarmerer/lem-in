@@ -9,15 +9,12 @@ import (
 // Use the following logic to calculate an optimal path:
 // If Rooms in Path1 + Ants in Path1 > Rooms in Path2 send Ant to Path2
 // Otherwise, send Ant to Path1
-func InitAntsAndAssignPaths(antsAmount int, graph *types.Graph) ([]types.Ant, types.Room) {
-	rooms := graph.GetRoomList()
-	source := rooms[0]
-	sink := rooms[len(rooms)-1]
-	paths := EdmondsKarp(graph, source, sink)
-	ants := make([]types.Ant, antsAmount)
-	for i := 0; i < antsAmount; i++ {
+func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) []types.Ant {
+	paths := EdmondsKarp(graph, data.Start, data.End)
+	ants := make([]types.Ant, data.AntsAmount)
+	for i := 0; i < data.AntsAmount; i++ {
 		ants[i].ID = i
-		ants[i].Position = source
+		ants[i].Position = data.Start
 	}
 	//ASSIGN PATHS TO ANTS
 	antsInPath := make([]int, len(paths))
@@ -36,7 +33,7 @@ func InitAntsAndAssignPaths(antsAmount int, graph *types.Graph) ([]types.Ant, ty
 		}
 	}
 
-	return ants, sink
+	return ants
 }
 
 // MoveAnts moves all ants from source to sink in a correct order

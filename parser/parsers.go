@@ -33,14 +33,14 @@ func ParseFile(fileName string) (*types.Data, *types.Graph) {
 	parseComments(&lines, &usedIndexes)
 	parseRooms(&lines, graph, &usedIndexes, roomsMap)
 	parseLinks(&lines, &usedIndexes, graph, roomsMap)
-	// fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\nRooms:", Data.AntsAmount, Data.Start, Data.End)
-	// for _, r := range Data.Rooms {
-	// 	fmt.Printf("\n Name: %v\n  x: %v\n  y: %v\n  Links: %v", r.Name, r.CoordX, r.CoordY, r.Connections)
+	// fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\n", data.AntsAmount, data.Start, data.End)
+	// for key, r := range graph.Roommap {
+	// 	fmt.Println(key, r)
 	// }
 	return &data, graph
 }
 
-func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *string, antsAmount *int) {
+func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Room, antsAmount *int) {
 	startFound := false
 	endFound := false
 	for index, line := range *lines {

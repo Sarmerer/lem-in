@@ -1,12 +1,16 @@
 package parser
 
-func soreCheck(arr *[]string, usedIndexes *[]int, found *bool, sorePointer *string, index int, sore string) { //sore == start or end
+import "lem-in/types"
+
+func soreCheck(arr *[]string, usedIndexes *[]int, found *bool, sorePointer *types.Room, index int, sore string) { //sore == start or end
 	if !*found {
 		if index < len(*arr)-1 {
-			if _, _, valid := validRoom((*arr)[index+1], sorePointer); !valid {
+			if x, y, valid := validRoom((*arr)[index+1], &sorePointer.Name); !valid {
 				invalidInput(-1, "invalid "+sore+" room params")
 			} else {
 				*usedIndexes = append(*usedIndexes, index)
+				sorePointer.X = x
+				sorePointer.Y = y
 			}
 			*found = true
 		} else {
