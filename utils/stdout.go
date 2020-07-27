@@ -1,6 +1,9 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	"lem-in/config"
+)
 
 func PrintResult(lines *[]string, antMoves *[][]string) {
 	for _, line := range *lines {
@@ -15,5 +18,5 @@ func PrintResult(lines *[]string, antMoves *[][]string) {
 		}
 		fmt.Println("")
 	}
-	fmt.Println("\nTurns:", counter)
+	fmt.Println(config.MessageTurns, counter)
 }

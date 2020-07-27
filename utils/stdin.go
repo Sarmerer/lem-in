@@ -3,20 +3,21 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"lem-in/config"
 	"os"
 )
 
 func ProcessInput(args []string) string {
-	fileName := "../maps/custom.txt"
+	fileName := config.PathCustomMap
 	if len(args) == 1 {
 		return args[0]
 	} else if len(args) > 1 {
-		fmt.Println("Too many arguments")
+		fmt.Println(config.ErrorManyArgs)
 		os.Exit(1)
 	} else {
 		scanner := bufio.NewScanner(os.Stdin)
 		var text string
-		fmt.Println("Enter map data\nPress Ctrl+D when finished")
+		fmt.Println(config.MessageCustomMap)
 		for scanner.Scan() {
 			text += scanner.Text() + "\n"
 		}

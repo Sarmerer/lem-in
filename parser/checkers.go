@@ -1,6 +1,10 @@
 package parser
 
-import "lem-in/types"
+import (
+	"fmt"
+	"lem-in/config"
+	"lem-in/types"
+)
 
 //sore == start or end
 //This function checks if start/end  has valid parameters,
@@ -9,7 +13,7 @@ func soreCheck(arr *[]string, usedIndexes *[]int, found *bool, sorePointer *type
 	if !*found {
 		if index < len(*arr)-1 {
 			if x, y, valid := validRoom((*arr)[index+1], &sorePointer.Name); !valid {
-				invalidInput(-1, "invalid "+sore+" room params")
+				invalidInput(-1, fmt.Sprintf(config.ErrorSore, sore))
 			} else {
 				*usedIndexes = append(*usedIndexes, index)
 				sorePointer.X = x
@@ -17,10 +21,10 @@ func soreCheck(arr *[]string, usedIndexes *[]int, found *bool, sorePointer *type
 			}
 			*found = true
 		} else {
-			invalidInput(-1, "no "+sore+" room coords")
+			invalidInput(-1, fmt.Sprintf(config.ErrorNoSoreCoords, sore))
 		}
 	} else {
-		invalidInput(-1, "another "+sore+" declaration")
+		invalidInput(-1, fmt.Sprintf(config.ErrorAnotherSore, sore))
 	}
 }
 

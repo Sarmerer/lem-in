@@ -3,6 +3,7 @@ package parser
 import (
 	"bufio"
 	"fmt"
+	"lem-in/config"
 	"lem-in/types"
 	"os"
 	"strconv"
@@ -25,7 +26,7 @@ func ReadFile(fileName string) *[]string {
 		lines = append(lines, scanner.Text())
 	}
 	if len(lines) == 0 {
-		invalidInput(-1, "no data provided")
+		invalidInput(-1, config.ErrorNoData)
 	}
 	return &lines
 }
@@ -59,7 +60,7 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Roo
 		if index == 0 {
 			a, err := strconv.Atoi(line)
 			if err != nil || a < 1 {
-				invalidInput(index, "invalid ants amount")
+				invalidInput(index, config.ErrorAnts)
 			}
 			*antsAmount = a
 		} else {
@@ -71,9 +72,9 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Roo
 		}
 	}
 	if !startFound {
-		invalidInput(-1, "no start room")
+		invalidInput(-1, config.ErrorNoStart)
 	} else if !endFound {
-		invalidInput(-1, "no end room")
+		invalidInput(-1, config.ErrorNoEnd)
 	}
 }
 
@@ -93,7 +94,7 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 					_, xErr := strconv.Atoi(spl[1])
 					_, yErr := strconv.Atoi(spl[2])
 					if xErr == nil && yErr == nil {
-						invalidInput(index, "invalid room params")
+						invalidInput(index, config.ErrorRoom)
 					}
 				}
 				*usedIndexes = append(*usedIndexes, index)
@@ -115,12 +116,12 @@ func parseRooms(lines *[]string, graph *types.Graph, usedIndexes *[]int, roomsMa
 				if _, ok := roomsMap[room]; !ok {
 					roomsMap[room] = len(graph.GetRoomList()) + 1
 				} else {
-					invalidInput(index, "invalid room params")
+					invalidInput(index, config.ErrorRoom)
 				}
 				graph.AddRoom(types.Room{Name: room, X: x, Y: y, HasAnt: false})
 				*usedIndexes = append(*usedIndexes, index)
 			} else if !validLink(line, &[]string{}) {
-				invalidInput(index, "invalid room params")
+				invalidInput(index, config.ErrorRoom)
 			}
 		}
 	}
@@ -136,11 +137,11 @@ func parseLinks(arr *[]string, usedIndexes *[]int, graph *types.Graph, roomsMap 
 		if indexIsFree(index, usedIndexes) {
 			if validLink(line, &link) {
 				if _, ok := roomsMap[link[0]]; !ok {
-					invalidInput(index, "invalid link params")
+					invalidInput(index, config.ErrorLink)
 				} else if _, ok := roomsMap[link[1]]; !ok {
-					invalidInput(index, "invalid link params")
+					invalidInput(index, config.ErrorLink)
 				} else if link[0] == link[1] {
-					invalidInput(index, "invalid link params")
+					invalidInput(index, config.ErrorLink)
 				}
 				var sourceRoom types.Room
 				var destRoom types.Room

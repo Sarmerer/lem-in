@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"lem-in/config"
 	"lem-in/parser"
 	"lem-in/solver"
 	"lem-in/utils"
@@ -20,5 +21,5 @@ func main() {
 			),
 		)
 	utils.PrintResult(lines, result)
-	fmt.Printf("\nTime elapsed: %vs\n", time.Since(tStart).Seconds())
+	fmt.Printf(config.MessageElapsed, time.Since(tStart).Seconds())
 }
