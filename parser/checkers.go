@@ -2,7 +2,10 @@ package parser
 
 import "lem-in/types"
 
-func soreCheck(arr *[]string, usedIndexes *[]int, found *bool, sorePointer *types.Room, index int, sore string) { //sore == start or end
+//sore == start or end
+//This function checks if start/end  has valid parameters,
+//or if there is start/end dublicate.
+func soreCheck(arr *[]string, usedIndexes *[]int, found *bool, sorePointer *types.Room, index int, sore string) {
 	if !*found {
 		if index < len(*arr)-1 {
 			if x, y, valid := validRoom((*arr)[index+1], &sorePointer.Name); !valid {

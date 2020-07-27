@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+//ReadFile function takes a fileName,
+//which should be a path to a desired file,
+//and returns it's content as an array of strings.
 func ReadFile(fileName string) *[]string {
 	var lines []string
 	file, err := os.Open(fileName)
@@ -27,6 +30,11 @@ func ReadFile(fileName string) *[]string {
 	return &lines
 }
 
+//ParseFile function takes an array of strings to find:
+//start room, end room, all other rooms and all links.
+//It also checks if there is: valid ants amount, no
+//rooms duplicates, no links to unexistent rooms,
+//no rooms with invalid names or coordinates.
 func ParseFile(lines *[]string) (*types.Data, *types.Graph) {
 	graph := types.InitGraph()
 	var data types.Data
@@ -40,6 +48,10 @@ func ParseFile(lines *[]string) (*types.Data, *types.Graph) {
 	return &data, graph
 }
 
+//sore == start or end.
+//This function finds the start and the  end room and the amount of ants.
+//Program wii terminate if: there is no start/end room, start/end has duplicates,
+//start/end have invalid name or coordinate, ants amount is lesser or equal 0.
 func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Room, antsAmount *int) {
 	startFound := false
 	endFound := false
@@ -65,6 +77,13 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Roo
 	}
 }
 
+//This function finds all the comments in the file.
+//Note:
+//Project instructions say: "A room will never start with the letter L or with # and must have no spaces"
+//It is not clear if a program should consider a room, starting with L or #, as an invalid input,
+//or it is a rule of how rooms should be named.
+//
+//That is why: "#comment 12 45", will be considered as wrong room parameters.
 func parseComments(arr *[]string, usedIndexes *[]int) {
 	for index, line := range *arr {
 		if len(line) > 0 {
@@ -73,7 +92,7 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 				if len(spl) == 3 {
 					_, xErr := strconv.Atoi(spl[1])
 					_, yErr := strconv.Atoi(spl[2])
-					if xErr != nil || yErr != nil {
+					if xErr == nil && yErr == nil {
 						invalidInput(index, "invalid room params")
 					}
 				}
@@ -83,6 +102,11 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 	}
 }
 
+//This function finds all the rooms.
+//It checks if a room:
+//is unique,
+//has positive numeric coordinates,
+//doesn't contain # or L in it's name.
 func parseRooms(lines *[]string, graph *types.Graph, usedIndexes *[]int, roomsMap map[string]int) {
 	for index, line := range *lines {
 		var room string
@@ -93,7 +117,7 @@ func parseRooms(lines *[]string, graph *types.Graph, usedIndexes *[]int, roomsMa
 				} else {
 					invalidInput(index, "invalid room params")
 				}
-				graph.AddRoom(types.Room{room, x, y, false})
+				graph.AddRoom(types.Room{Name: room, X: x, Y: y, HasAnt: false})
 				*usedIndexes = append(*usedIndexes, index)
 			} else if !validLink(line, &[]string{}) {
 				invalidInput(index, "invalid room params")
@@ -102,6 +126,10 @@ func parseRooms(lines *[]string, graph *types.Graph, usedIndexes *[]int, roomsMa
 	}
 }
 
+//This function finds all the links.
+//It checks if a link:
+//doesn't connect unexistent rooms,
+//doesn't connect room with itself.
 func parseLinks(arr *[]string, usedIndexes *[]int, graph *types.Graph, roomsMap map[string]int) {
 	for index, line := range *arr {
 		var link []string

@@ -46,12 +46,12 @@ func BreadthFirstSearch(g *types.Graph, source types.Room, sink types.Room) (int
 	path := make(map[types.Room]types.Room, length)
 	// Initialize a room which can be used to tell if a room has been
 	// discovered yet or not, and give every room that key to begin.
-	notvisited := types.Room{"", -1, -1, false}
+	notvisited := types.Room{Name: "", X: -1, Y: -1, HasAnt: false}
 	for _, room := range roomlist {
 		path[room] = notvisited
 	}
 	// Give the source a different key to ensure it is not rediscovered.
-	path[source] = types.Room{"", -2, -2, false}
+	path[source] = types.Room{Name: "", X: -2, Y: -2, HasAnt: false}
 	// Initialize a queue and enqueue the source room.
 	q := GenQueue(0)
 	q.Enqueue(source)

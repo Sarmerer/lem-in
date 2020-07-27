@@ -7,7 +7,11 @@ import (
 	"strings"
 )
 
-func validRoom(line string, roomPointer *string) (int, int, bool) {
+//This function validates room parameters.
+//It returns false if:
+//coordinates are incorrect,
+//room name is empty, or contains # or L.
+func validRoom(line string, roomName *string) (int, int, bool) {
 	spl := strings.Split(line, " ")
 	expectedSplLen := 3
 
@@ -15,22 +19,23 @@ func validRoom(line string, roomPointer *string) (int, int, bool) {
 		return 0, 0, false
 	}
 	xCoord, xErr := strconv.Atoi(spl[1])
-	if xErr != nil {
-		return 0, 0, false
-	}
 	yCoord, yErr := strconv.Atoi(spl[2])
-	if yErr != nil {
+	if xErr != nil || yErr != nil || xCoord < 0 || yCoord < 0 {
 		return 0, 0, false
 	}
 	if len(spl[0]) > 0 {
 		if spl[0][0] == '#' || spl[0][0] == 'L' {
 			return 0, 0, false
 		}
+	} else {
+		return 0, 0, false
 	}
-	*roomPointer = spl[0]
+	*roomName = spl[0]
 	return xCoord, yCoord, true
 }
 
+//This function validates link parameters.
+//It returns false if link declaration is not valid.
 func validLink(line string, linkPointer *[]string) bool {
 	spl := strings.Split(line, "-")
 

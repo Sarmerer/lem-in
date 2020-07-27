@@ -13,7 +13,12 @@ func main() {
 	file := utils.ProcessInput(os.Args[1:])
 	tStart := time.Now()
 	lines := parser.ReadFile(file)
-	result := solver.MoveAnts(solver.InitAntsAndAssignPaths(parser.ParseFile(lines)))
+	result :=
+		solver.MoveAnts(
+			solver.InitAntsAndAssignPaths(
+				parser.ParseFile(lines),
+			),
+		)
 	utils.PrintResult(lines, result)
-	fmt.Println("Elapsed:", time.Since(tStart).Seconds())
+	fmt.Printf("\nTime elapsed: %vs\n", time.Since(tStart).Seconds())
 }
