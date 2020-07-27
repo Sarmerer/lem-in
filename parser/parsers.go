@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func ParseFile(fileName string) (*types.Data, *types.Graph) {
+func ParseFile(fileName string) (*types.Data, *types.Graph, *[]string) {
 	graph := types.InitGraph()
 
 	var data types.Data
@@ -34,11 +34,7 @@ func ParseFile(fileName string) (*types.Data, *types.Graph) {
 	parseComments(&lines, &usedIndexes)
 	parseRooms(&lines, graph, &usedIndexes, roomsMap)
 	parseLinks(&lines, &usedIndexes, graph, roomsMap)
-	// fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\n", data.AntsAmount, data.Start, data.End)
-	// for key, r := range graph.Roommap {
-	// 	fmt.Println(key, r)
-	// }
-	return &data, graph
+	return &data, graph, &lines
 }
 
 func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Room, antsAmount *int) {
