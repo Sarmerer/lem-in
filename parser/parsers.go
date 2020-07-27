@@ -9,7 +9,9 @@ import (
 	"strings"
 )
 
-func ParseFile(fileName string) *types.Data {
+func ParseFile(fileName string) (*types.Data, *types.Graph) {
+	graph := types.InitGraph()
+
 	var data types.Data
 	usedIndexes := []int{0}
 	roomsMap := make(map[string]int)
@@ -29,13 +31,13 @@ func ParseFile(fileName string) *types.Data {
 	}
 	parseSoreAndAnts(&lines, &usedIndexes, &data.Start, &data.End, &data.AntsAmount)
 	parseComments(&lines, &usedIndexes)
-	parseRooms(&lines, &data.Rooms, &usedIndexes, roomsMap)
-	parseLinks(&lines, &usedIndexes, &data.Rooms, roomsMap)
+	parseRooms(&lines, graph, &usedIndexes, roomsMap)
+	parseLinks(&lines, &usedIndexes, graph, roomsMap)
 	// fmt.Printf("Ants amount: %v\nStart: %v\nEnd: %v\nRooms:", Data.AntsAmount, Data.Start, Data.End)
 	// for _, r := range Data.Rooms {
 	// 	fmt.Printf("\n Name: %v\n  x: %v\n  y: %v\n  Links: %v", r.Name, r.CoordX, r.CoordY, r.Connections)
 	// }
-	return &data
+	return &data, graph
 }
 
 func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *string, antsAmount *int) {
@@ -81,17 +83,17 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 	}
 }
 
-func parseRooms(lines *[]string, rooms *[]types.RoomStruct, usedIndexes *[]int, roomsMap map[string]int) {
+func parseRooms(lines *[]string, graph *types.Graph, usedIndexes *[]int, roomsMap map[string]int) {
 	for index, line := range *lines {
 		var room string
 		if indexIsFree(index, usedIndexes) {
 			if x, y, valid := validRoom(line, &room); valid {
 				if _, ok := roomsMap[room]; !ok {
-					roomsMap[room] = len(*rooms) + 1
+					roomsMap[room] = len(graph.GetRoomList()) + 1
 				} else {
 					invalidInput(index, "invalid room params")
 				}
-				*rooms = append(*rooms, types.RoomStruct{room, x, y, []string{}})
+				graph.AddRoom(types.Room{room, x, y, false})
 				*usedIndexes = append(*usedIndexes, index)
 			} else if !validLink(line, &[]string{}) {
 				invalidInput(index, "invalid room params")
@@ -100,7 +102,7 @@ func parseRooms(lines *[]string, rooms *[]types.RoomStruct, usedIndexes *[]int, 
 	}
 }
 
-func parseLinks(arr *[]string, usedIndexes *[]int, rooms *[]types.RoomStruct, roomsMap map[string]int) {
+func parseLinks(arr *[]string, usedIndexes *[]int, graph *types.Graph, roomsMap map[string]int) {
 	for index, line := range *arr {
 		var link []string
 		if indexIsFree(index, usedIndexes) {
@@ -112,7 +114,17 @@ func parseLinks(arr *[]string, usedIndexes *[]int, rooms *[]types.RoomStruct, ro
 				} else if link[0] == link[1] {
 					invalidInput(index, "invalid link params")
 				}
-				(*rooms)[roomsMap[link[0]]-1].Connections = append((*rooms)[roomsMap[link[0]]-1].Connections, link[1])
+				var sourceRoom types.Room
+				var destRoom types.Room
+				for _, room := range graph.GetRoomList() {
+					if room.Name == link[0] {
+						sourceRoom = room
+					}
+					if room.Name == link[1] {
+						destRoom = room
+					}
+				}
+				graph.AddNeighbour(sourceRoom, destRoom, 1)
 			}
 		}
 	}
