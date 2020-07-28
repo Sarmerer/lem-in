@@ -6,9 +6,10 @@ import (
 	"text/template"
 )
 
-var templates *template.Template = template.Must(template.ParseGlob("../templates/*.html"))
+var templates *template.Template
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
+	templates = template.Must(template.ParseGlob("../templates/*.html"))
 	if r.URL.Path != "/" {
 		errorHandler(w, r, 404)
 		return

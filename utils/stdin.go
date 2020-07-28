@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// ProcessInput
 func ProcessInput(args []string) string {
 	fileName := config.PathCustomMap
 	if len(args) == 1 {
