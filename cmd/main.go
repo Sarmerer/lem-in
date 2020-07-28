@@ -6,14 +6,13 @@ import (
 	"lem-in/parser"
 	"lem-in/solver"
 	"lem-in/utils"
-	"os"
 	"time"
 )
 
 func main() {
-	file := utils.ProcessInput(os.Args[1:])
+	// file := utils.ProcessInput(os.Args[1:])
 	tStart := time.Now()
-	lines := parser.ReadFile(file)
+	lines := parser.ReadFile("../maps/alem-audit/e0.txt")
 	result :=
 		solver.MoveAnts(
 			solver.InitAntsAndAssignPaths(

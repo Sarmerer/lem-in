@@ -1,5 +1,6 @@
 package types
 
+// Data structure to hold Ants amount, and Start and End rooms
 type Data struct {
 	AntsAmount int
 	Start,

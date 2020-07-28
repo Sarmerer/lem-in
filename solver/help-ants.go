@@ -33,6 +33,12 @@ func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) ([]types.Ant, 
 	antsInPath[0]++
 	// Iterate through the rest of ants to assign each a path
 	for i, currPath := 1, 0; i < len(ants); i++ {
+		// If there is a direct path between source and sink
+		// assign each ant path source-sink
+		if len(paths[currPath]) == 2 {
+			ants[i].Path = paths[currPath]
+			continue
+		}
 		// Make sure that next path exists in Paths Array
 		// If Rooms in CurrentPath + Ants in CurrentPath > Rooms in NextPath
 		// Assign Ant to NextPath
