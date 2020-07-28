@@ -5,6 +5,7 @@ import (
 	"lem-in/config"
 )
 
+// PrintResult prints file contents and ants' moves
 func PrintResult(lines *[]string, antMoves *[][]string) {
 	for _, line := range *lines {
 		fmt.Println(line)
