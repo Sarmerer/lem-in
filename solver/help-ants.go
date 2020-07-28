@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lem-in/config"
 	"lem-in/types"
+	"lem-in/utils"
 )
 
 // InitAntsAndAssignPaths initialazes Ants and assigns an optimal path to each Ant
@@ -16,7 +17,7 @@ func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) ([]types.Ant, 
 	// If var paths is empty - no valid paths were found
 	// Exit the program
 	if len(paths) == 0 {
-		Exit(config.ErrorNoValidPaths)
+		utils.InvalidInput(-1, config.ErrorNoPaths)
 	}
 	// Initialize ants array and assign each ant ID and start(source) position
 	ants := make([]types.Ant, data.AntsAmount)

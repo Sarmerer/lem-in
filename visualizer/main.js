@@ -54,11 +54,6 @@ $(document).ready(function () {
       },
 
       {
-        // node nparent
-        data: { id: "nparent" },
-      },
-
-      {
         // edge e1
         data: {
           id: "e1",

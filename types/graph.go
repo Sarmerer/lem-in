@@ -1,18 +1,5 @@
 package types
 
-type Data struct {
-	AntsAmount int
-	Start,
-	End Room
-}
-
-// Room structure with name, (x, y) coordinates, and HasAnt bool to check if the room is empty.
-type Room struct {
-	Name   string
-	X, Y   int
-	HasAnt bool
-}
-
 // Neighbour structure contains connected room
 // For this project, only 1 ant per vertex is aloud,
 // So Capacity will always be equal to 1

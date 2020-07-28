@@ -1,9 +1,6 @@
 package parser
 
 import (
-	"fmt"
-	"lem-in/config"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -49,13 +46,4 @@ func validLink(line string, linkPointer *[]string) bool {
 	*linkPointer = append(*linkPointer, linkFrom)
 	*linkPointer = append(*linkPointer, linkTo)
 	return true
-}
-
-func invalidInput(line int, msg string) {
-	if line >= 0 {
-		fmt.Printf(config.ErrorBaseExact, line+1, msg)
-	} else {
-		fmt.Printf(config.ErrorBase, msg)
-	}
-	os.Exit(1)
 }

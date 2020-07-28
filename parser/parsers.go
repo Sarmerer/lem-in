@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"lem-in/config"
 	"lem-in/types"
+	"lem-in/utils"
 	"os"
 	"strconv"
 	"strings"
@@ -26,7 +27,7 @@ func ReadFile(fileName string) *[]string {
 		lines = append(lines, scanner.Text())
 	}
 	if len(lines) == 0 {
-		invalidInput(-1, config.ErrorNoData)
+		utils.InvalidInput(-1, config.ErrorNoData)
 	}
 	return &lines
 }
@@ -50,7 +51,7 @@ func ParseFile(lines *[]string) (*types.Data, *types.Graph) {
 }
 
 //sore == start or end.
-//This function finds the start and the  end room and the amount of ants.
+//parseSoreAndAnts function finds the start and the  end room and the amount of ants.
 //Program wii terminate if: there is no start/end room, start/end has duplicates,
 //start/end have invalid name or coordinate, ants amount is lesser or equal 0.
 func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Room, antsAmount *int) {
@@ -60,7 +61,7 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Roo
 		if index == 0 {
 			a, err := strconv.Atoi(line)
 			if err != nil || a < 1 {
-				invalidInput(index, config.ErrorAnts)
+				utils.InvalidInput(index, config.ErrorAnts)
 			}
 			*antsAmount = a
 		} else {
@@ -72,13 +73,13 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Roo
 		}
 	}
 	if !startFound {
-		invalidInput(-1, config.ErrorNoStart)
+		utils.InvalidInput(-1, config.ErrorNoStart)
 	} else if !endFound {
-		invalidInput(-1, config.ErrorNoEnd)
+		utils.InvalidInput(-1, config.ErrorNoEnd)
 	}
 }
 
-//This function finds all the comments in the file.
+//parseComments function finds all the comments in the file.
 //Note:
 //Project instructions say: "A room will never start with the letter L or with # and must have no spaces"
 //It is not clear if a program should consider a room, starting with L or #, as an invalid input,
@@ -94,7 +95,7 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 					_, xErr := strconv.Atoi(spl[1])
 					_, yErr := strconv.Atoi(spl[2])
 					if xErr == nil && yErr == nil {
-						invalidInput(index, config.ErrorRoom)
+						utils.InvalidInput(index, config.ErrorRoom)
 					}
 				}
 				*usedIndexes = append(*usedIndexes, index)
@@ -103,7 +104,7 @@ func parseComments(arr *[]string, usedIndexes *[]int) {
 	}
 }
 
-//This function finds all the rooms.
+//parseRooms function finds all the rooms.
 //It checks if a room:
 //is unique,
 //has positive numeric coordinates,
@@ -116,18 +117,18 @@ func parseRooms(lines *[]string, graph *types.Graph, usedIndexes *[]int, roomsMa
 				if _, ok := roomsMap[room]; !ok {
 					roomsMap[room] = len(graph.GetRoomList()) + 1
 				} else {
-					invalidInput(index, config.ErrorRoom)
+					utils.InvalidInput(index, config.ErrorRoom)
 				}
 				graph.AddRoom(types.Room{Name: room, X: x, Y: y, HasAnt: false})
 				*usedIndexes = append(*usedIndexes, index)
 			} else if !validLink(line, &[]string{}) {
-				invalidInput(index, config.ErrorRoom)
+				utils.InvalidInput(index, config.ErrorRoom)
 			}
 		}
 	}
 }
 
-//This function finds all the links.
+//parseLinks function finds all the links.
 //It checks if a link:
 //doesn't connect unexistent rooms,
 //doesn't connect room with itself.
@@ -137,11 +138,11 @@ func parseLinks(arr *[]string, usedIndexes *[]int, graph *types.Graph, roomsMap 
 		if indexIsFree(index, usedIndexes) {
 			if validLink(line, &link) {
 				if _, ok := roomsMap[link[0]]; !ok {
-					invalidInput(index, config.ErrorLink)
+					utils.InvalidInput(index, config.ErrorLink)
 				} else if _, ok := roomsMap[link[1]]; !ok {
-					invalidInput(index, config.ErrorLink)
+					utils.InvalidInput(index, config.ErrorLink)
 				} else if link[0] == link[1] {
-					invalidInput(index, config.ErrorLink)
+					utils.InvalidInput(index, config.ErrorLink)
 				}
 				var sourceRoom types.Room
 				var destRoom types.Room
