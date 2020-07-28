@@ -6,6 +6,7 @@ const (
 	MessageCustomMap = "Enter map data\nPress Ctrl+D when finished"
 	MessageElapsed   = "\nElapsed: %vs\n"
 	MessageTurns     = "\nTurns:"
+	MessageLines     = "\nLines:"
 
 	ErrorManyArgs = "Too many arguments"
 
@@ -18,7 +19,7 @@ const (
 	ErrorSore        = "invalid %s params" //sore == start or end
 	ErrorAnotherSore = "another %s declaration"
 
-	ErrorNoPaths = "no valid paths were found"
+	ErrorNoPaths      = "no valid paths were found"
 	ErrorNoData       = "no data provided"
 	ErrorNoStart      = "no start room"
 	ErrorNoEnd        = "no end room"

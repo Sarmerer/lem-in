@@ -10,13 +10,15 @@ func PrintResult(lines *[]string, antMoves *[][]string) {
 		fmt.Println(line)
 	}
 	fmt.Println("\nSolution:")
-	var counter int
+	var turns int
+	var newLines int
 	for _, move := range *antMoves {
+		newLines++
 		for _, m := range move {
 			fmt.Print(m)
-			counter++
+			turns++
 		}
 		fmt.Println("")
 	}
-	fmt.Println(config.MessageTurns, counter)
+	fmt.Println(config.MessageTurns, turns, config.MessageLines, newLines)
 }
