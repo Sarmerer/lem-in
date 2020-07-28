@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-//This function validates room parameters.
+//validRoom function validates room parameters.
 //It returns false if:
 //coordinates are incorrect,
 //room name is empty, or contains # or L.
@@ -35,7 +35,7 @@ func validRoom(line string, roomName *string) (int, int, bool) {
 	return xCoord, yCoord, true
 }
 
-//This function validates link parameters.
+//validLink function validates link parameters.
 //It returns false if link declaration is not valid.
 func validLink(line string, linkPointer *[]string) bool {
 	spl := strings.Split(line, "-")
