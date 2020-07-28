@@ -12,11 +12,12 @@ const (
 	ErrorBase      = "Invalid input: %v\n"
 	ErrorBaseExact = "Invalid input at line #%v: %v\n"
 
-	ErrorAnts        = "ivalid ants amount"
-	ErrorRoom        = "ivalid room params"
-	ErrorLink        = "invalid link params"
-	ErrorSore        = "invalid %s params" //sore == start or end
-	ErrorAnotherSore = "another %s declaration"
+	ErrorAnts         = "ivalid ants amount"
+	ErrorRoom         = "ivalid room params"
+	ErrorLink         = "invalid link params"
+	ErrorSore         = "invalid %s params" //sore == start or end
+	ErrorAnotherSore  = "another %s declaration"
+	ErrorNoValidPaths = "no valid paths were found"
 
 	ErrorNoData       = "no data provided"
 	ErrorNoStart      = "no start room"

@@ -2,6 +2,7 @@ package solver
 
 import (
 	"fmt"
+	"lem-in/config"
 	"lem-in/types"
 )
 
@@ -10,62 +11,90 @@ import (
 // If Rooms in Path1 + Ants in Path1 > Rooms in Path2 send Ant to Path2
 // Otherwise, send Ant to Path1
 func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) ([]types.Ant, *types.Room) {
+	// Find all valid paths with Edmonds-Karp and BFS
 	paths := EdmondsKarp(graph, data.Start, data.End)
+	// If var paths is empty - no valid paths were found
+	// Exit the program
+	if len(paths) == 0 {
+		Exit(config.ErrorNoValidPaths)
+	}
+	// Initialize ants array and assign each ant ID and start(source) position
 	ants := make([]types.Ant, data.AntsAmount)
 	for i := 0; i < data.AntsAmount; i++ {
 		ants[i].ID = i
 		ants[i].Position = data.Start
 	}
-	//ASSIGN PATHS TO ANTS
+	// Initialize antsInPath to know the current an=mount of ants in each path
 	antsInPath := make([]int, len(paths))
+	// Send ant1 to path1 because path1 is the shortest
 	ants[0].Path = paths[0]
+	// Now there is one ant in path1
 	antsInPath[0]++
+	// Iterate through the rest of ants to assign each a path
 	for i, currPath := 1, 0; i < len(ants); i++ {
+		// Make sure that next path exists in Paths Array
+		// If Rooms in CurrentPath + Ants in CurrentPath > Rooms in NextPath
+		// Assign Ant to NextPath
 		if (currPath+1) < len(paths) &&
 			(len(paths[currPath])+antsInPath[currPath]) > len(paths[currPath+1]) {
 			currPath++
 			antsInPath[currPath]++
 			ants[i].Path = paths[currPath]
 		} else {
+			// If we get here: next path doesn't exist or
+			// Rooms in CurrentPath + Ants in CurrentPath <= Rooms in NextPath
+			// Set Current Path to Path1 and assign Ant to Current Path
 			currPath = 0
 			ants[i].Path = paths[currPath]
 			antsInPath[currPath]++
 		}
 	}
-
+	// All ants have paths assigned now so return
 	return ants, &data.End
 }
 
 // MoveAnts moves all ants from source to sink in a correct order
 func MoveAnts(ants []types.Ant, sink *types.Room) *[][]string {
-	var result [][]string
-	currPath := 1
-	//MOVE ANTS
+	// resultToPriint to hold moves of ants
+	var resultToPrint [][]string
+	// Set next room to 1 because Room0 is the source(start)
+	nextRoom := 1
+	// Iterate until all ants reach the sink (end)
 	for !allAntsIn(ants, *sink) {
-		var iteration []string
+		var iterationToPrint []string
+		// Iterate through each ant and move it if next room is free
 		for i := range ants {
+			// If ant has already reached the sink - skip it
 			if ants[i].Position != *sink {
+				// Make sure sink is always empty
 				sink.HasAnt = false
-				if ants[i].Path[currPath] == *sink {
-					iteration = append(iteration, fmt.Sprintf("L%v-%v ", i, ants[i].Path[currPath].Name))
+				// If next room in Ant's path is the sink:
+				// Move Ant to sink, free up the previous room and continue
+				if ants[i].Path[nextRoom] == *sink {
+					iterationToPrint = append(iterationToPrint, fmt.Sprintf("L%v-%v ", i, ants[i].Path[nextRoom].Name))
 					ants[i].Position = *sink
-					ants[i].Path[currPath-1].HasAnt = false
+					ants[i].Path[nextRoom-1].HasAnt = false
 					continue
 				}
-				if !ants[i].Path[currPath].HasAnt {
-					iteration = append(iteration, fmt.Sprintf("L%v-%v ", i, ants[i].Path[currPath].Name))
-					ants[i].Position = ants[i].Path[currPath]
-					ants[i].Path[currPath].HasAnt = true
-					ants[i].Path[currPath-1].HasAnt = false
-					ants[i].Path = ants[i].Path[currPath:]
+				// Otherwise, check the next room availabilty
+				// If next room is empty: move Ant and free up the previous room and
+				// cut the Ant's Path so that it always starts from the current room
+				// If next room is not empty: skip the ant this time
+				if !ants[i].Path[nextRoom].HasAnt {
+					iterationToPrint = append(iterationToPrint, fmt.Sprintf("L%v-%v ", i, ants[i].Path[nextRoom].Name))
+					ants[i].Position = ants[i].Path[nextRoom]
+					ants[i].Path[nextRoom].HasAnt = true
+					ants[i].Path[nextRoom-1].HasAnt = false
+					ants[i].Path = ants[i].Path[nextRoom:]
 				}
 			}
 		}
-		result = append(result, iteration)
+		resultToPrint = append(resultToPrint, iterationToPrint)
 	}
-	return &result
+	return &resultToPrint
 }
 
+// allAntsIn checks if all ants have reached the sink
 func allAntsIn(ants []types.Ant, sink types.Room) bool {
 	for _, ant := range ants {
 		if ant.Position != sink {
