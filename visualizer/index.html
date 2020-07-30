@@ -1,19 +1,28 @@
+<!doctype html>
 <html>
-  <head>
-    <title>lem-in</title>
-    <link rel="stylesheet" type="text/css" href="main.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.15.2/cytoscape.min.js"></script>
-  </head>
-  <body>
-    <!-- <form id="form" method="POST" action="/upload">
-      <input type="file" name="uploadfile" />
-      <input type="hidden" name="token" value="f" />
-      <input type="submit" value="upload" />
-    </form> -->
-    <div id="cy"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="main.js"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8">
+		<title>Lem_in &#128028</title>
+		<link rel="stylesheet" type="text/css" href="./static/main.css">
+		<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+		<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+		<script src="https://unpkg.com/layout-base/layout-base.js"></script>
+		<script src="https://unpkg.com/cose-base/cose-base.js"></script>
+		<script src="https://unpkg.com/cytoscape-cose-bilkent/cytoscape-cose-bilkent.js"></script>
+		<script src="./static/main.js"></script>
+	</head>
+	<body>
+		<div class="header">
+			<h1>Lem_in &#128028</h1>
+			<button id="play_pause" type="button">Play</button>
+			<button id="next" type="button">Next</button>
+			<button id="reset" type="button">Reset</button>
+		</div>
+		<div class="stats">
+			<div id="paths_div"><h2 id="paths"></h2></div>
+			<div id="ants_div"><h2 id="ants_out"></h2></div>
+			<div id="rounds_div"><h2 id="rounds"></h2></div>
+		</div>
+		<div id='cy'></div>
+	</body>
 </html>

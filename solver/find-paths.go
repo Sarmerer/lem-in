@@ -3,7 +3,10 @@
 
 package solver
 
-import "lem-in/types"
+import (
+	"fmt"
+	"lem-in/types"
+)
 
 // EdmondsKarp accepts a graph with a valid source and sink room,
 // and returns the list of all valid paths in the graph
@@ -32,6 +35,7 @@ func EdmondsKarp(g *types.Graph, source types.Room, sink types.Room) [][]types.R
 		// Order path in ascending order and add it to the pathList
 		addPath(revPath, &pathList)
 	}
+	fmt.Println(len(pathList))
 	return pathList
 }
 

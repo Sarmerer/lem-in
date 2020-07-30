@@ -11,9 +11,11 @@ import (
 	"strings"
 )
 
-//ReadFile function takes a fileName,
-//which should be a path to a desired file,
-//and returns it's content as an array of strings.
+/*
+ReadFile function takes a fileName,
+which should be a path to a desired file,
+and returns it's content as an array of strings.
+*/
 func ReadFile(fileName string) *[]string {
 	var lines []string
 	file, err := os.Open(fileName)
@@ -32,18 +34,21 @@ func ReadFile(fileName string) *[]string {
 	return &lines
 }
 
-//ParseFile function takes an array of strings to find:
-//start room, end room, all other rooms and all links.
-//It also checks if there is: valid ants amount, no
-//rooms duplicates, no links to unexistent rooms,
-//no rooms with invalid names or coordinates.
+/*
+ParseFile function takes an array of strings to find:
+start room, end room, all other rooms and all links.
+It also checks if there is: valid ants amount, no
+rooms duplicates, no links to unexistent rooms,
+no rooms with invalid names or coordinates.
+*/
 func ParseFile(lines *[]string) (*types.Data, *types.Graph) {
 	graph := types.InitGraph()
 	var data types.Data
 	usedIndexes := []int{0}
+	//usedCoordsMap := make(map[int]int)
 	roomsMap := make(map[string]int)
 
-	parseSoreAndAnts(lines, &usedIndexes, &data.Start, &data.End, &data.AntsAmount)
+	parseSoreAndAnts(lines, &usedIndexes, &data)
 	parseComments(lines, &usedIndexes)
 	parseRooms(lines, graph, &usedIndexes, roomsMap)
 	parseLinks(lines, &usedIndexes, graph, roomsMap)
@@ -54,7 +59,9 @@ func ParseFile(lines *[]string) (*types.Data, *types.Graph) {
 //parseSoreAndAnts function finds the start and the  end room and the amount of ants.
 //Program wii terminate if: there is no start/end room, start/end has duplicates,
 //start/end have invalid name or coordinate, ants amount is lesser or equal 0.
-func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Room, antsAmount *int) {
+func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, data *types.Data) {
+	start := &data.Start
+	end := &data.End
 	startFound := false
 	endFound := false
 	for index, line := range *lines {
@@ -63,7 +70,7 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, start, end *types.Roo
 			if err != nil || a < 1 {
 				utils.InvalidInput(index, config.ErrorAnts)
 			}
-			*antsAmount = a
+			data.AntsAmount = a
 		} else {
 			if line == "##start" {
 				soreCheck(lines, usedIndexes, &startFound, start, index, "start")
