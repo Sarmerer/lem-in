@@ -16,51 +16,55 @@ type response struct {
 	PathsCount int `json:"paths_count,omitempty"`
 }
 
-type nodeStruct struct {
+type dataStruct struct {
+	//for nodes
 	ID   string `json:"id,omitempty"`
 	Type string `json:"type,omitempty"`
-}
 
-type edgeStruct struct {
-	ID     string `json:"id,omitempty"`
-	Source string `json:"spurce,omitempty"`
+	//for edges
+	Source string `json:"source,omitempty"`
 	Target string `json:"target,omitempty"`
-}
-type pathStruct struct {
-	ID    string   `json:"id,omitempty"`
+
+	//for paths
 	Ants  int      `json:"ants,omitempty"`
 	Nodes []string `json:"nodes,omitempty"`
 }
 
 type nodesStruct struct {
-	Data nodeStruct `json:"data,omitempty"`
+	Data dataStruct `json:"data,omitempty"`
 }
 
 type edgesStruct struct {
-	Data edgeStruct `json:"data,omitempty"`
+	Data dataStruct `json:"data,omitempty"`
 }
 
-func Marshal(data *types.Data, graph *types.Graph, paths *[][]types.Room) {
-	path := "../visualizer/static/test.json"
+type pathStruct struct {
+	ID   int      `json:"id"`
+	Ants int      `json:"ants,omitempty"`
+	Path []string `json:"nodes,omitempty"`
+}
+
+func Marshal(graph *types.Graph) {
+	path := "../visualizer/static/data.json"
 	file, err := os.Create(path)
 	if err != nil {
 		fmt.Println("Unable to create file.", err)
 		os.Exit(1)
 	}
 	res := response{
-		Ants:       data.AntsAmount,
-		PathsCount: len(*paths),
+		Ants:       graph.AntsAmount,
+		PathsCount: len(graph.Paths),
 	}
 	var counter int
 	for parent, rooms := range graph.Roommap {
-		node := nodesStruct{}
-		edge := edgesStruct{}
-		if parent.Name == data.Start.Name {
-			node.Data = nodeStruct{ID: parent.Name, Type: "start"}
-		} else if parent.Name == data.End.Name {
-			node.Data = nodeStruct{ID: parent.Name, Type: "end"}
+		var node nodesStruct
+		var edge edgesStruct
+		if parent.Name == graph.Start.Name {
+			node.Data = dataStruct{ID: parent.Name, Type: "start"}
+		} else if parent.Name == graph.End.Name {
+			node.Data = dataStruct{ID: parent.Name, Type: "end"}
 		} else {
-			node.Data = nodeStruct{ID: parent.Name}
+			node.Data = dataStruct{ID: parent.Name}
 		}
 		res.Nodes = append(res.Nodes, node)
 		for _, room := range rooms {
@@ -72,13 +76,17 @@ func Marshal(data *types.Data, graph *types.Graph, paths *[][]types.Room) {
 		}
 	}
 	counter = 0
-	for _, path := range *paths {
-		p := pathStruct{}
-		p.ID = fmt.Sprint("path", counter)
-		for _, i := range path {
-			p.Nodes = append(p.Nodes, i.Name)
+	for _, ant := range graph.Ants {
+		var path []string
+		for _, i := range ant.Path {
+			path = append(path, i.Name)
 		}
-		res.Paths = append(res.Paths, p)
+		if index, found := pathAlreadyFound(&res.Paths, path); found {
+			res.Paths[index].Ants++
+		} else {
+			res.Paths = append(res.Paths, pathStruct{ID: counter, Ants: 1, Path: path})
+			counter++
+		}
 	}
 	r, err := json.Marshal(res)
 	if err != nil {
@@ -90,4 +98,22 @@ func Marshal(data *types.Data, graph *types.Graph, paths *[][]types.Room) {
 		fmt.Println("Unable to write file.", err)
 		os.Exit(1)
 	}
+}
+
+func pathAlreadyFound(paths *[]pathStruct, path []string) (int, bool) {
+	for index, p := range *paths {
+		counter := 0
+		if len(p.Path) != len(path) {
+			return 0, false
+		}
+		for i, node := range p.Path {
+			if node == path[i] {
+				counter++
+			}
+		}
+		if counter == len(path) {
+			return index, true
+		}
+	}
+	return 0, false
 }

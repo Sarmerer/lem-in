@@ -1,5 +1,19 @@
 package types
 
+// Room structure with name, (x, y) coordinates, and HasAnt bool to check if the room is empty.
+type Room struct {
+	Name   string
+	X, Y   int
+	HasAnt bool
+}
+
+// Ant structure with Ant ID, path to follow and position
+type Ant struct {
+	ID       int
+	Path     []Room
+	Position Room
+}
+
 // Neighbour structure contains connected room
 // For this project, only 1 ant per vertex is aloud,
 // So Capacity will always be equal to 1
@@ -11,6 +25,8 @@ type Neighbour struct {
 // Graph structure contains a map of connected rooms to the key Room
 type Graph struct {
 	AntsAmount int
+	Ants       []Ant
+	Paths      [][]Room
 	Start,
 	End Room
 	Roommap map[Room][]Neighbour

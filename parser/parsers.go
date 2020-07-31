@@ -41,27 +41,26 @@ It also checks if there is: valid ants amount, no
 rooms duplicates, no links to unexistent rooms,
 no rooms with invalid names or coordinates.
 */
-func ParseFile(lines *[]string) (*types.Data, *types.Graph) {
+func ParseFile(lines *[]string) *types.Graph {
 	graph := types.InitGraph()
-	var data types.Data
 	usedIndexes := []int{0}
 	//usedCoordsMap := make(map[int]int)
 	roomsMap := make(map[string]int)
 
-	parseSoreAndAnts(lines, &usedIndexes, &data)
+	parseSoreAndAnts(lines, &usedIndexes, graph)
 	parseComments(lines, &usedIndexes)
 	parseRooms(lines, graph, &usedIndexes, roomsMap)
-	parseLinks(lines, &usedIndexes, graph, roomsMap)
-	return &data, graph
+	parseLinks(lines, graph, &usedIndexes, roomsMap)
+	return graph
 }
 
 //sore == start or end.
 //parseSoreAndAnts function finds the start and the  end room and the amount of ants.
 //Program wii terminate if: there is no start/end room, start/end has duplicates,
 //start/end have invalid name or coordinate, ants amount is lesser or equal 0.
-func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, data *types.Data) {
-	start := &data.Start
-	end := &data.End
+func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, graph *types.Graph) {
+	start := &graph.Start
+	end := &graph.End
 	startFound := false
 	endFound := false
 	for index, line := range *lines {
@@ -70,7 +69,7 @@ func parseSoreAndAnts(lines *[]string, usedIndexes *[]int, data *types.Data) {
 			if err != nil || a < 1 {
 				utils.InvalidInput(index, config.ErrorAnts)
 			}
-			data.AntsAmount = a
+			graph.AntsAmount = a
 		} else {
 			if line == "##start" {
 				soreCheck(lines, usedIndexes, &startFound, start, index, "start")
@@ -139,7 +138,7 @@ func parseRooms(lines *[]string, graph *types.Graph, usedIndexes *[]int, roomsMa
 //It checks if a link:
 //doesn't connect unexistent rooms,
 //doesn't connect room with itself.
-func parseLinks(arr *[]string, usedIndexes *[]int, graph *types.Graph, roomsMap map[string]int) {
+func parseLinks(arr *[]string, graph *types.Graph, usedIndexes *[]int, roomsMap map[string]int) {
 	for index, line := range *arr {
 		var link []string
 		if indexIsFree(index, usedIndexes) {
