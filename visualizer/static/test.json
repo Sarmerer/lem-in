@@ -1,0 +1,14 @@
+{
+  "nodes": [{ "data": { "id": "0", "type": "start" } }, { "data": { "id": "2" } }, { "data": { "id": "3" } }, { "data": { "id": "1", "type": "end" } }],
+  "edges": [
+    { "data": { "id": "edge0", "spurce": "0", "target": "2" } },
+    { "data": { "id": "edge1", "spurce": "2", "target": "0" } },
+    { "data": { "id": "edge2", "spurce": "2", "target": "3" } },
+    { "data": { "id": "edge3", "spurce": "3", "target": "2" } },
+    { "data": { "id": "edge4", "spurce": "3", "target": "1" } },
+    { "data": { "id": "edge5", "spurce": "1", "target": "3" } }
+  ],
+  "paths": [{ "id": "path0", "nodes": ["0", "2", "3", "1"] }],
+  "ants": 4,
+  "paths_count": 1
+}

@@ -11,7 +11,7 @@ import (
 // Use the following logic to calculate an optimal path:
 // If Rooms in Path1 + Ants in Path1 > Rooms in Path2 send Ant to Path2
 // Otherwise, send Ant to Path1
-func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) ([]types.Ant, *types.Room) {
+func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) ([]types.Ant, *[][]types.Room) {
 	// Find all valid paths with Edmonds-Karp and BFS
 	paths := EdmondsKarp(graph, data.Start, data.End)
 	// If var paths is empty - no valid paths were found
@@ -57,7 +57,7 @@ func InitAntsAndAssignPaths(data *types.Data, graph *types.Graph) ([]types.Ant, 
 		}
 	}
 	// All ants have paths assigned now so return
-	return ants, &data.End
+	return ants, &paths
 }
 
 // MoveAnts moves all ants from source to sink in a correct order

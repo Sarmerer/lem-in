@@ -10,6 +10,9 @@ type Neighbour struct {
 
 // Graph structure contains a map of connected rooms to the key Room
 type Graph struct {
+	AntsAmount int
+	Start,
+	End Room
 	Roommap map[Room][]Neighbour
 }
 
