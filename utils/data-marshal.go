@@ -8,34 +8,25 @@ import (
 )
 
 type response struct {
-	Nodes []nodesStruct `json:"nodes,omitempty"`
-	Edges []edgesStruct `json:"edges,omitempty"`
-	Paths []pathStruct  `json:"paths,omitempty"`
-	Ants  int           `json:"ants,omitempty"`
+	Nodes []node       `json:"nodes,omitempty"`
+	Edges []edge       `json:"edges,omitempty"`
+	Paths []pathStruct `json:"paths,omitempty"`
+	Ants  int          `json:"ants,omitempty"`
 
 	PathsCount int `json:"paths_count,omitempty"`
 }
 
-type dataStruct struct {
-	//for nodes
-	ID   string `json:"id,omitempty"`
-	Type string `json:"type,omitempty"`
-
-	//for edges
-	Source string `json:"source,omitempty"`
-	Target string `json:"target,omitempty"`
-
-	//for paths
-	Ants  int      `json:"ants,omitempty"`
-	Nodes []string `json:"nodes,omitempty"`
+type node struct {
+	ID    string `json:"id,omitempty"`
+	Label string `json:"label,omitempty"`
+	Type  string `json:"type,omitempty"`
+	X     int    `json:"x"`
+	Y     int    `json:"y"`
 }
 
-type nodesStruct struct {
-	Data dataStruct `json:"data,omitempty"`
-}
-
-type edgesStruct struct {
-	Data dataStruct `json:"data,omitempty"`
+type edge struct {
+	From string `json:"from,omitempty"`
+	To   string `json:"to,omitempty"`
 }
 
 type pathStruct struct {
@@ -57,21 +48,17 @@ func Marshal(graph *types.Graph) {
 	}
 	var counter int
 	for parent, rooms := range graph.Roommap {
-		var node nodesStruct
-		var edge edgesStruct
+		n := node{ID: parent.Name, Label: parent.Name, X: parent.X, Y: parent.Y}
 		if parent.Name == graph.Start.Name {
-			node.Data = dataStruct{ID: parent.Name, Type: "start"}
+			n.Label = "start"
 		} else if parent.Name == graph.End.Name {
-			node.Data = dataStruct{ID: parent.Name, Type: "end"}
-		} else {
-			node.Data = dataStruct{ID: parent.Name}
+			n.Label = "end"
 		}
-		res.Nodes = append(res.Nodes, node)
+		res.Nodes = append(res.Nodes, n)
 		for _, room := range rooms {
-			edge.Data.ID = fmt.Sprint("edge", counter)
-			edge.Data.Source = parent.Name
-			edge.Data.Target = room.NeighbourRoom.Name
-			res.Edges = append(res.Edges, edge)
+			if !edgeUsed(parent.Name, room.NeighbourRoom.Name, res.Edges) {
+				res.Edges = append(res.Edges, edge{From: parent.Name, To: room.NeighbourRoom.Name})
+			}
 			counter++
 		}
 	}
@@ -116,4 +103,13 @@ func pathAlreadyFound(paths *[]pathStruct, path []string) (int, bool) {
 		}
 	}
 	return 0, false
+}
+
+func edgeUsed(from, to string, edges []edge) bool {
+	for _, edge := range edges {
+		if (edge.From == from || edge.From == to) && (edge.To == from || edge.To == to) {
+			return true
+		}
+	}
+	return false
 }
