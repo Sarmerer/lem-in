@@ -8,31 +8,33 @@ import (
 )
 
 type response struct {
-	Nodes []node       `json:"nodes,omitempty"`
-	Edges []edge       `json:"edges,omitempty"`
-	Paths []pathStruct `json:"paths,omitempty"`
-	Ants  int          `json:"ants,omitempty"`
+	Nodes []node       `json:"nodes"`
+	Edges []edge       `json:"edges"`
+	Paths []pathStruct `json:"paths"`
+	Ants  int          `json:"ants"`
 
-	PathsCount int `json:"paths_count,omitempty"`
+	PathsCount int `json:"paths_count"`
 }
 
 type node struct {
-	ID    string `json:"id,omitempty"`
-	Label string `json:"label,omitempty"`
+	ID    string `json:"id"`
+	Label string `json:"label"`
 	Type  string `json:"type,omitempty"`
 	X     int    `json:"x"`
 	Y     int    `json:"y"`
+	Size  int    `json:"size"`
 }
 
 type edge struct {
-	From string `json:"from,omitempty"`
-	To   string `json:"to,omitempty"`
+	ID     string `json:"id"`
+	Source string `json:"source"`
+	Target string `json:"target"`
 }
 
 type pathStruct struct {
 	ID   int      `json:"id"`
-	Ants int      `json:"ants,omitempty"`
-	Path []string `json:"nodes,omitempty"`
+	Ants int      `json:"ants"`
+	Path []string `json:"nodes"`
 }
 
 func Marshal(graph *types.Graph) {
@@ -48,32 +50,33 @@ func Marshal(graph *types.Graph) {
 	}
 	var counter int
 	for parent, rooms := range graph.Roommap {
-		n := node{ID: parent.Name, Label: parent.Name, X: parent.X, Y: parent.Y}
+		n := node{ID: parent.Name, Label: parent.Name, X: parent.X, Y: parent.Y, Size: 7}
 		if parent.Name == graph.Start.Name {
-			n.Label = "start"
+			n.Label += "(start)"
+			n.Size = 10
 		} else if parent.Name == graph.End.Name {
-			n.Label = "end"
+			n.Size = 10
+			n.Label += "(end)"
 		}
 		res.Nodes = append(res.Nodes, n)
 		for _, room := range rooms {
 			if !edgeUsed(parent.Name, room.NeighbourRoom.Name, res.Edges) {
-				res.Edges = append(res.Edges, edge{From: parent.Name, To: room.NeighbourRoom.Name})
+				res.Edges = append(res.Edges, edge{
+					ID:     fmt.Sprint("e", counter),
+					Source: parent.Name,
+					Target: room.NeighbourRoom.Name,
+				})
+				counter++
 			}
-			counter++
 		}
 	}
 	counter = 0
-	for _, ant := range graph.Ants {
-		var path []string
-		for _, i := range ant.Path {
-			path = append(path, i.Name)
+	for index, path := range graph.Paths {
+		var p []string
+		for _, room := range path {
+			p = append(p, room.Name)
 		}
-		if index, found := pathAlreadyFound(&res.Paths, path); found {
-			res.Paths[index].Ants++
-		} else {
-			res.Paths = append(res.Paths, pathStruct{ID: counter, Ants: 1, Path: path})
-			counter++
-		}
+		res.Paths = append(res.Paths, pathStruct{ID: counter, Ants: graph.AntsInPaths[index], Path: p})
 	}
 	r, err := json.Marshal(res)
 	if err != nil {
@@ -87,27 +90,9 @@ func Marshal(graph *types.Graph) {
 	}
 }
 
-func pathAlreadyFound(paths *[]pathStruct, path []string) (int, bool) {
-	for index, p := range *paths {
-		counter := 0
-		if len(p.Path) != len(path) {
-			return 0, false
-		}
-		for i, node := range p.Path {
-			if node == path[i] {
-				counter++
-			}
-		}
-		if counter == len(path) {
-			return index, true
-		}
-	}
-	return 0, false
-}
-
 func edgeUsed(from, to string, edges []edge) bool {
 	for _, edge := range edges {
-		if (edge.From == from || edge.From == to) && (edge.To == from || edge.To == to) {
+		if (edge.Source == from || edge.Source == to) && (edge.Target == from || edge.Target == to) {
 			return true
 		}
 	}

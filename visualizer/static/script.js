@@ -1,30 +1,43 @@
+var s;
+var data;
 $(document).ready(function () {
-  $.getJSON("./static/data.json", function (jsonData, textStatus, jqXHR) {
-    console.log(jsonData);
-
-    // create a network
-    var container = document.getElementById("mynetwork");
-
-    var options = {
-      nodes: {
-        font: {
-          size: 20,
-        },
-        borderWidth: 3,
+  $.getJSON("./static/data.json", function (data) {
+    s = new sigma({
+      graph: data,
+      container: "container",
+      settings: {
+        defaultNodeColor: "#ec5148",
+        defaultLabelColor: "#ffffff",
+        edgeColor: "target",
       },
-      edges: {
-        width: 5,
-        color: "rgba(154, 18, 179, 0.3)",
-      },
-    };
-
-    // initialize your network!
-    var network = new vis.Network(container, jsonData, options);
-    console.log(network);
-    jsonData.paths.forEach((element) => {
-      element.nodes.forEach((node) => {
-        console.log(network.findNode(node));
-      });
     });
+    data.paths.forEach((path) => {
+      for (var i = 0; i < path.ants; i++) {
+        path.nodes.forEach((room) => {
+          s.graph.nodes().forEach((node) => {
+            if (node.id == room) {
+              node.color = "#ffffff";
+              s.refresh();
+              setTimeout(() => {}, 100);
+              node.color = "default";
+              s.refresh();
+            }
+          });
+        });
+      }
+    });
+    console.log(s.interNodes());
   });
 });
+
+function getEdgeID(source, target) {
+  var id;
+  var edges = s.graph.edges();
+  for (var i = 0; i < edges.length; i++) {
+    if ((edges[i].source == source && edges[i].target == target) || (edges[i].source == target && edges[i].target == source)) {
+      id = edges[i].id;
+      break;
+    }
+  }
+  return id;
+}

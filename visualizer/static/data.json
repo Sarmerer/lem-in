@@ -1,1 +1,26 @@
-{"nodes":[{"id":"richard","label":"start","x":0,"y":6},{"id":"gilfoyle","label":"gilfoyle","x":6,"y":3},{"id":"erlich","label":"erlich","x":9,"y":6},{"id":"dinish","label":"dinish","x":6,"y":9},{"id":"jimYoung","label":"jimYoung","x":11,"y":7},{"id":"peter","label":"end","x":14,"y":6}],"edges":[{"from":"richard","to":"dinish"},{"from":"richard","to":"gilfoyle"},{"from":"richard","to":"erlich"},{"from":"gilfoyle","to":"peter"},{"from":"gilfoyle","to":"erlich"},{"from":"erlich","to":"jimYoung"},{"from":"dinish","to":"jimYoung"},{"from":"jimYoung","to":"peter"}],"paths":[{"id":0,"ants":51,"nodes":["gilfoyle","peter"]},{"id":1,"ants":49,"nodes":["jimYoung","peter"]}],"ants":100,"paths_count":2}
+{
+  "nodes": [
+    { "id": "jimYoung", "label": "jimYoung", "x": 11, "y": 7, "size": 7 },
+    { "id": "peter", "label": "peter(end)", "x": 14, "y": 6, "size": 10 },
+    { "id": "richard", "label": "richard(start)", "x": 0, "y": 6, "size": 10 },
+    { "id": "gilfoyle", "label": "gilfoyle", "x": 6, "y": 3, "size": 7 },
+    { "id": "erlich", "label": "erlich", "x": 9, "y": 6, "size": 7 },
+    { "id": "dinish", "label": "dinish", "x": 6, "y": 9, "size": 7 }
+  ],
+  "edges": [
+    { "id": "e0", "source": "jimYoung", "target": "dinish" },
+    { "id": "e1", "source": "jimYoung", "target": "erlich" },
+    { "id": "e2", "source": "jimYoung", "target": "peter" },
+    { "id": "e3", "source": "peter", "target": "gilfoyle" },
+    { "id": "e4", "source": "richard", "target": "dinish" },
+    { "id": "e5", "source": "richard", "target": "gilfoyle" },
+    { "id": "e6", "source": "richard", "target": "erlich" },
+    { "id": "e7", "source": "gilfoyle", "target": "erlich" }
+  ],
+  "paths": [
+    { "id": 0, "ants": 501, "nodes": ["richard", "gilfoyle", "peter"] },
+    { "id": 0, "ants": 499, "nodes": ["richard", "dinish", "jimYoung", "peter"] }
+  ],
+  "ants": 1000,
+  "paths_count": 2
+}

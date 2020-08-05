@@ -56,6 +56,7 @@ func InitAntsAndAssignPaths(graph *types.Graph) {
 			antsInPath[currPath]++
 		}
 	}
+	graph.AntsInPaths = antsInPath
 }
 
 // MoveAnts moves all ants from source to sink in a correct order

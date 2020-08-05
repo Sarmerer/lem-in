@@ -23,6 +23,7 @@ func main() {
 	elapsed := time.Since(tStart).Seconds()
 	utils.PrintResult(lines, result)
 	fmt.Printf(config.MessageElapsed, elapsed)
+
 	utils.Marshal(graph)
 	visualizer.StartServer()
 }
