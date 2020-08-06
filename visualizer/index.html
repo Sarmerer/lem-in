@@ -2,13 +2,20 @@
   <head>
     <link rel="stylesheet" type="text/css" href="./static/style.css" />
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-    <!-- <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script> -->
-    <!-- <script type="text/javascript" src="./static/script.js"></script> -->
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <script src="https://unpkg.com/layout-base/layout-base.js"></script>
+    <script src="https://unpkg.com/cose-base/cose-base.js"></script>
+    <script src="https://unpkg.com/cytoscape-cose-bilkent/cytoscape-cose-bilkent.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape-animate-flow@0.0.2/cytoscape-animate-flow.min.js"></script>
+    <script src="./static/script.js"></script>
   </head>
   <body>
-    <div id="container"></div>
-    <script src="./static/lib/sigma.min.js"></script>
-    <script src="./static/lib/sigma.parsers.json.js"></script>
-    <script src="./static/script.js"></script>
-  </body>
+		<div class="header">
+			<h1>Lem_in &#128028</h1>
+			<button id="play" type="button">Play</button>
+			<button id="next" type="button">Next</button>
+			<button id="reset" type="button">Reset</button>
+		</div>
+		<div id='cy'></div>
+	</body>
 </html>
