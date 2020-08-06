@@ -36,11 +36,11 @@ type edgeStruct struct {
 }
 
 type pathStruct struct {
-	ID    int      `json:"id"`
-	Ants  int      `json:"ants"`
-	Color string   `json:"color"`
-	Nodes []string `json:"nodes"`
-	Edges []string `json:"edges"`
+	AntsInPath  int      `json:"antsInPath"`
+	Color       string   `json:"color"`
+	Nodes       []string `json:"nodes"`
+	AntsInNodes []int    `json:"antsInNodes"`
+	Edges       []string `json:"edges"`
 }
 
 func Marshal(graph *types.Graph) {
@@ -77,21 +77,27 @@ func Marshal(graph *types.Graph) {
 			}
 		}
 	}
-	counter = 0
 	for index, path := range graph.Paths {
 		var p []string
 		var e []string
+		var a []int
 		for _, room := range path {
 			p = append(p, room.Name)
 			if len(p) >= 2 {
 				e = append(e, getEdge(p[len(p)-2], p[len(p)-1], res.Edges))
 			}
+			if len(a) == 0 {
+				a = append(a, graph.AntsInPaths[index])
+			} else {
+				a = append(a, 0)
+			}
+
 		}
 		res.Paths = append(res.Paths, pathStruct{
-			ID:    counter,
-			Ants:  graph.AntsInPaths[index],
-			Nodes: p,
-			Edges: e,
+			AntsInPath:  graph.AntsInPaths[index],
+			Nodes:       p,
+			AntsInNodes: a,
+			Edges:       e,
 		})
 	}
 	r, err := json.Marshal(res)
