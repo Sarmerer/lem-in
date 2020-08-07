@@ -2,7 +2,7 @@ var cy;
 var jsonData;
 var startNode;
 var endNode;
-var antsOut = 0;
+var antsOut;
 $(document).ready(function () {
   $.getJSON("./static/data.json", function (data) {
     jsonData = data;
@@ -27,14 +27,8 @@ $(document).ready(function () {
     });
     $("#play").click(function (e) {
       e.preventDefault();
-      var counter = 0;
       jsonData.paths.forEach((path, pIndex) => {
         moveAnts(path, pIndex);
-        jsonData.paths.forEach((path) => {
-          path.nodes.forEach((node) => {
-            cy.$id(node).animate({ style: { opacity: 0.3 } }, { duration: 20 }, { queue: true });
-          });
-        });
       });
     });
     $("#reset").click(function (e) {
@@ -56,29 +50,15 @@ function moveAnts(path, pIndex) {
         jsonData.paths[pIndex].antsInNodes[nIndex + 1] += 1;
         jsonData.paths[pIndex].antsInNodes[nIndex] = 0;
         color(node, currNode);
-        antsOut++;
         break;
       } else if (currNode >= 1 && nextNode == 0) {
         jsonData.paths[pIndex].antsInNodes[nIndex]--;
         jsonData.paths[pIndex].antsInNodes[nIndex + 1] = 1;
         color(node, currNode);
-        antsOut++;
         break;
       }
-      $("#ants").text(antsOut + "/" + jsonData.ants);
+      $("#ants").text(path.antsInPath - path.antsInNodes[0] + "/" + jsonData.ants);
     }
-    // setTimeout(function () {
-    //   if (index > 0 && index < node.length) {
-    //     cy.$id(path.edges[index - 1])
-    //       .animate({ style: { opacity: 1 } }, { duration: 20 })
-    //       .delay(400)
-    //       .animate({ style: { opacity: 0.2 } });
-    //   }
-    //   cy.$id(node)
-    //     .animate({ style: { opacity: 1 } }, { duration: 20 }, { queue: true })
-    //     .delay(400)
-    //     .animate({ style: { opacity: 0.3 } });
-    // }, 1000 * index);
     console.log(path.antsInNodes);
   }
 }
