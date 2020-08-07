@@ -3,7 +3,7 @@ package config
 const (
 	PathCustomMap = "../maps/custom.txt"
 
-	MessageCustomMap = "Enter map data\nPress Ctrl+D when finished"
+	MessageCustomMap = "You can use a map that already exists by specifying it as a program argument\nor\nEnter map data here\nPress Ctrl+D when finished"
 	MessageElapsed   = "\nElapsed: %vs\n"
 	MessageTurns     = "\nTurns:"
 	MessageLines     = "\nLines:"
