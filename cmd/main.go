@@ -6,7 +6,6 @@ import (
 	"lem-in/parser"
 	"lem-in/solver"
 	"lem-in/utils"
-	"lem-in/visualizer"
 	"os"
 	"time"
 )
@@ -23,7 +22,4 @@ func main() {
 	elapsed := time.Since(tStart).Seconds()
 	utils.PrintResult(lines, result)
 	fmt.Printf(config.MessageElapsed, elapsed)
-
-	utils.Marshal(graph)
-	visualizer.StartServer()
 }

@@ -4,7 +4,6 @@
 package solver
 
 import (
-	"fmt"
 	"lem-in/types"
 )
 
@@ -35,7 +34,6 @@ func EdmondsKarp(g *types.Graph, source types.Room, sink types.Room) [][]types.R
 		// Order path in ascending order and add it to the pathList
 		addPath(revPath, &pathList)
 	}
-	fmt.Println(len(pathList))
 	return pathList
 }
 
